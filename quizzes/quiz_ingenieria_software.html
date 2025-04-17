@@ -1,1 +1,133 @@
-<h2>Quiz Ingeniería del Software</h2>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cuestionario Interactivo - Programación Avanzada</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #f0f0f0;
+    }
+    .question {
+      margin-bottom: 20px;
+      padding: 15px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    }
+    .correct {
+      color: green;
+      font-weight: bold;
+    }
+    .wrong {
+      color: red;
+      font-weight: bold;
+    }
+    .btn {
+      padding: 10px 15px;
+      margin-top: 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .btn:hover {
+      background-color: #0056b3;
+    }
+    #timer {
+      font-size: 18px;
+      font-weight: bold;
+      color: #dc3545;
+      margin-bottom: 20px;
+    }
+    #score {
+      font-size: 18px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Cuestionario Interactivo - Programación Avanzada</h1>
+  <div id="timer">Tiempo restante: 15:00</div>
+  <form id="quizForm"></form>
+  <button class="btn" onclick="checkAnswers()">Revisar respuestas</button>
+  <div id="score"></div>
+
+  <script>
+    const questions = [
+      { question: "¿Qué hace querySelector en JS?", options: ["Selecciona por ID", "Selecciona por selectores CSS", "Crea un nuevo nodo", "Borra un elemento"], answer: 1 },
+      { question: "¿Es posible declarar un arreglo sin tamaño en JS?", options: ["Sí", "No", "Solo con var", "Solo en modo estricto"], answer: 0 },
+      // ... (continúa con las demás preguntas)
+    ];
+
+    const quizForm = document.getElementById("quizForm");
+
+    questions.forEach((q, i) => {
+      const container = document.createElement("div");
+      container.classList.add("question");
+
+      const questionText = document.createElement("p");
+      questionText.innerText = `${i + 1}. ${q.question}`;
+      container.appendChild(questionText);
+
+      q.options.forEach((option, j) => {
+        const label = document.createElement("label");
+        label.innerHTML = `
+          <input type="radio" name="q${i}" value="${j}" /> ${option}
+        `;
+        container.appendChild(label);
+        container.appendChild(document.createElement("br"));
+      });
+
+      quizForm.appendChild(container);
+    });
+
+    function checkAnswers() {
+      let score = 0;
+      const total = questions.length;
+
+      questions.forEach((q, i) => {
+        const selected = document.querySelector(`input[name="q${i}"]:checked`);
+        const container = quizForm.children[i];
+
+        if (selected) {
+          const answerIndex = parseInt(selected.value);
+          if (answerIndex === q.answer) {
+            container.classList.add("correct");
+            container.classList.remove("wrong");
+            score++;
+          } else {
+            container.classList.add("wrong");
+            container.classList.remove("correct");
+          }
+        } else {
+          container.classList.add("wrong");
+          container.classList.remove("correct");
+        }
+      });
+
+      document.getElementById("score").innerText = `Puntaje: ${score} de ${total}`;
+    }
+
+    // Temporizador de 15 minutos
+    let secondsLeft = 15 * 60;
+    const timerDisplay = document.getElementById("timer");
+
+    const timer = setInterval(() => {
+      const minutes = Math.floor(secondsLeft / 60);
+      const seconds = secondsLeft % 60;
+      timerDisplay.innerText = `Tiempo restante: ${minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
+
+      if (secondsLeft <= 0) {
+        clearInterval(timer);
+        checkAnswers();
+      }
+
+      secondsLeft--;
+    }, 1000);
+  </script>
+</body>
+</html>
